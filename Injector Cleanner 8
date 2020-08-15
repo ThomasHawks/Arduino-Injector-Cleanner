@@ -1,0 +1,106 @@
+//********************************
+// Nettoyage Injecteurs 8 sorties*
+//********************************
+
+//***********************
+//Declaration des E/S ***
+//***********************
+
+#define K_TIME_COEF   25  // Coefficient de multiplication du temps d'activation des relais
+#define PIN_LED       13  // Led Temoin elle indique que le relai 1 est a ON et que le relais2 et a OFF
+#define PIN_RELAIS_1  12  // Relais Arduino 5v
+#define PIN_RELAIS_2  11  // Relais Arduino 5v
+#define PIN_RELAIS_3  10  // Relais Arduino 5v
+#define PIN_RELAIS_4  9   // Relais Arduino 5v
+#define PIN_RELAIS_5  8   // Relais Arduino 5v
+#define PIN_RELAIS_6  7   // Relais Arduino 5v
+#define PIN_RELAIS_7  6   // Relais Arduino 5v
+#define PIN_RELAIS_8  5   // Relais Arduino 5v
+#define PIN_POTAR     A2  // Potentiometre pour fair varier le TI entre 0 et 10 seconde par palier d'une seconde
+
+//*************************
+//Declaration des variables globales
+//*************************
+float         PotarValeur;        // Valeur brute de lecture [0;1023]
+unsigned long g_time_cycle_start; // Temps lors du demarrage du cycle
+unsigned long g_delay;            // Temps d'ouverture et de fermeture de l'injecteur
+unsigned int  g_cycle;            // identification du cycle [0;1]
+
+//*****************
+//Setup
+//*****************
+
+void setup() {
+
+  pinMode(PIN_LED, OUTPUT);       // Led en sortie
+  pinMode(PIN_RELAIS_1, OUTPUT);  // relais 1 en sortie
+  pinMode(PIN_RELAIS_2, OUTPUT);  // relais 2 en sortie
+  pinMode(PIN_RELAIS_3, OUTPUT);  // relais 3 en sortie
+  pinMode(PIN_RELAIS_4, OUTPUT);  // relais 4 en sortie
+  pinMode(PIN_RELAIS_5, OUTPUT);  // relais 5 en sortie
+  pinMode(PIN_RELAIS_6, OUTPUT);  // relais 6 en sortie
+  pinMode(PIN_RELAIS_7, OUTPUT);  // relais 7 en sortie
+  pinMode(PIN_RELAIS_8, OUTPUT);  // relais 8 en sortie
+  pinMode(PIN_POTAR, INPUT);      // pontentiometre en entre
+
+  g_cycle = LOW;
+  g_time_cycle_start = millis();
+
+  //Temoin d'initialisation de la fin du setup
+  digitalWrite(PIN_LED, HIGH);
+  delay(100);
+  digitalWrite(PIN_LED, LOW);
+  delay(200);
+  digitalWrite(PIN_LED, HIGH);
+  delay(100);
+  digitalWrite(PIN_LED, LOW);
+  delay(200);
+  digitalWrite(PIN_LED, HIGH);
+  delay(100);
+  digitalWrite(PIN_LED, LOW);
+  delay(200);
+  digitalWrite(PIN_LED, HIGH);
+  delay(1000);
+  digitalWrite(PIN_LED, LOW);
+  delay(1000);
+}
+
+//****************
+//Loop
+//*****************
+void loop() {
+  long  l_act_time = millis();
+
+  PotarValeur = analogRead(PIN_POTAR);  // lecture du potentiometre valeur de 0 = 1023
+  g_delay = map(PotarValeur * PotarValeur,0,1056529,20,2000); // convertion quadratique ramenant entre 20ms et 2s de temporisation (de 50Hz a 0.5Hz)
+
+  if (g_time_cycle_start + g_delay < l_act_time)
+  {
+    g_time_cycle_start = l_act_time;
+    digitalWrite(PIN_LED, g_cycle);       // Allume la led
+    digitalWrite(PIN_RELAIS_1, HIGH);    // Relais 1 en marche
+    delay(g_delay);
+    digitalWrite(PIN_RELAIS_1, LOW);    // Relais 1 en repos
+    digitalWrite(PIN_RELAIS_2, HIGH);   // Relais 2 en marche
+    delay(g_delay);
+    digitalWrite(PIN_RELAIS_2, LOW);    // Relais 2 en repos
+    digitalWrite(PIN_RELAIS_3, HIGH);   // Relais 3 en marche
+    delay(g_delay);
+    digitalWrite(PIN_RELAIS_3, LOW);    // Relais 3 en repos
+    digitalWrite(PIN_RELAIS_4, HIGH);   // Relais 4 en marche
+    delay(g_delay);
+    digitalWrite(PIN_RELAIS_4, LOW);    // Relais 4 en repos
+    digitalWrite(PIN_RELAIS_5, HIGH);   // Relais 5 en marche
+    delay(g_delay);
+    digitalWrite(PIN_RELAIS_5, LOW);    // Relais 5 en repos
+    digitalWrite(PIN_RELAIS_6, HIGH);   // Relais 6 en marche
+    delay(g_delay);
+    digitalWrite(PIN_RELAIS_6, LOW);    // Relais 6 en repos
+    digitalWrite(PIN_RELAIS_7, HIGH);   // Relais 7 en marche
+    delay(g_delay);
+    digitalWrite(PIN_RELAIS_7, LOW);    // Relais 7 en repos
+    digitalWrite(PIN_RELAIS_8, HIGH);   // Relais 8 en marche
+    delay(g_delay);
+    digitalWrite(PIN_RELAIS_8, LOW);    // Relais 8 en repos
+  }  
+}
